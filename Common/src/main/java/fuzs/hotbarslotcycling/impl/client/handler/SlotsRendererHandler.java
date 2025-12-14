@@ -5,14 +5,14 @@ import fuzs.hotbarslotcycling.api.v1.client.SlotCyclingProvider;
 import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
 import fuzs.hotbarslotcycling.impl.config.ClientConfig;
 import fuzs.puzzleslib.api.client.gui.v2.GuiGraphicsHelper;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
+import net.minecraft.resources.Identifier;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,12 +21,12 @@ import net.minecraft.world.level.GameType;
 import java.util.Objects;
 
 public final class SlotsRendererHandler implements CyclingSlotsRenderer {
-    private static final ResourceLocation HOTBAR_SPRITE = ResourceLocationHelper.withDefaultNamespace("hud/hotbar");
-    private static final ResourceLocation HOTBAR_SELECTION_SPRITE = ResourceLocationHelper.withDefaultNamespace(
+    private static final Identifier HOTBAR_SPRITE = Identifier.withDefaultNamespace("hud/hotbar");
+    private static final Identifier HOTBAR_SELECTION_SPRITE = Identifier.withDefaultNamespace(
             "hud/hotbar_selection");
-    private static final ResourceLocation HOTBAR_OFFHAND_LEFT_SPRITE = ResourceLocationHelper.withDefaultNamespace(
+    private static final Identifier HOTBAR_OFFHAND_LEFT_SPRITE = Identifier.withDefaultNamespace(
             "hud/hotbar_offhand_left");
-    private static final ResourceLocation HOTBAR_OFFHAND_RIGHT_SPRITE = ResourceLocationHelper.withDefaultNamespace(
+    private static final Identifier HOTBAR_OFFHAND_RIGHT_SPRITE = Identifier.withDefaultNamespace(
             "hud/hotbar_offhand_right");
 
     private static CyclingSlotsRenderer instance = new SlotsRendererHandler();

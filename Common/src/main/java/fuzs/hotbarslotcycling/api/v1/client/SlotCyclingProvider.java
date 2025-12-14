@@ -5,7 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +14,7 @@ public interface SlotCyclingProvider {
     Factory[] GLOBAL_PROVIDER = new Factory[1];
     Map<Item, ItemCyclingProvider.Factory> ITEM_PROVIDERS = Maps.newIdentityHashMap();
 
-    static void registerProvider(@Nullable SlotCyclingProvider.Factory factory) {
+    static void registerProvider(SlotCyclingProvider.@Nullable Factory factory) {
         GLOBAL_PROVIDER[0] = factory;
     }
 
