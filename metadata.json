@@ -42,7 +42,7 @@
     ],
     "environments": {
         "client": "required",
-        "server": "required"
+        "server": "unsupported"
     },
     "platforms": [
         "fabric",
