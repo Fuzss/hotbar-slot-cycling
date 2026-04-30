@@ -4,13 +4,12 @@ import fuzs.hotbarslotcycling.api.v1.client.CyclingSlotsRenderer;
 import fuzs.hotbarslotcycling.api.v1.client.SlotCyclingProvider;
 import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
 import fuzs.hotbarslotcycling.impl.config.ClientConfig;
-import fuzs.puzzleslib.api.client.gui.v2.GuiGraphicsHelper;
-import net.minecraft.resources.Identifier;
+import fuzs.puzzleslib.common.api.client.gui.v2.GuiGraphicsHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.HumanoidArm;
@@ -22,8 +21,7 @@ import java.util.Objects;
 
 public final class SlotsRendererHandler implements CyclingSlotsRenderer {
     private static final Identifier HOTBAR_SPRITE = Identifier.withDefaultNamespace("hud/hotbar");
-    private static final Identifier HOTBAR_SELECTION_SPRITE = Identifier.withDefaultNamespace(
-            "hud/hotbar_selection");
+    private static final Identifier HOTBAR_SELECTION_SPRITE = Identifier.withDefaultNamespace("hud/hotbar_selection");
     private static final Identifier HOTBAR_OFFHAND_LEFT_SPRITE = Identifier.withDefaultNamespace(
             "hud/hotbar_offhand_left");
     private static final Identifier HOTBAR_OFFHAND_RIGHT_SPRITE = Identifier.withDefaultNamespace(
@@ -31,7 +29,7 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
 
     private static CyclingSlotsRenderer instance = new SlotsRendererHandler();
 
-    public static void onAfterRenderGuiLayer(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void onAfterRenderGuiLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
 
         Minecraft minecraft = Minecraft.getInstance();
 
@@ -70,7 +68,7 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
     }
 
     @Override
-    public void renderSlots(GuiGraphics guiGraphics, int screenWidth, int screenHeight, float partialTick, Font font, Player player, ItemStack backwardStack, ItemStack selectedStack, ItemStack forwardStack) {
+    public void renderSlots(GuiGraphicsExtractor guiGraphics, int screenWidth, int screenHeight, float partialTick, Font font, Player player, ItemStack backwardStack, ItemStack selectedStack, ItemStack forwardStack) {
 
         if (HotbarSlotCycling.CONFIG.get(ClientConfig.class).slotsDisplayState
                 == ClientConfig.SlotsDisplayState.NEVER) {
@@ -128,7 +126,7 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
     }
 
     @Override
-    public void renderSlotBackgrounds(GuiGraphics guiGraphics, int posX, int posY, boolean renderForwardStack, boolean renderBackwardStack, boolean renderToRight) {
+    public void renderSlotBackgrounds(GuiGraphicsExtractor guiGraphics, int posX, int posY, boolean renderForwardStack, boolean renderBackwardStack, boolean renderToRight) {
 
         if (renderToRight) {
 
@@ -209,7 +207,7 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
     }
 
     @Override
-    public void renderSlotItems(GuiGraphics guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack selectedStack, ItemStack forwardStack, ItemStack backwardStack, boolean renderToRight) {
+    public void renderSlotItems(GuiGraphicsExtractor guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack selectedStack, ItemStack forwardStack, ItemStack backwardStack, boolean renderToRight) {
 
         if (renderToRight) {
 
@@ -231,15 +229,15 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
     }
 
     @Override
-    public void renderItemInSlot(GuiGraphics guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack itemStack) {
+    public void renderItemInSlot(GuiGraphicsExtractor guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack itemStack) {
         float popTime = CyclingInputHandler.getGlobalPopTime() - partialTick;
         this.renderSlot(guiGraphics, font, posX, posY, player, itemStack, popTime);
     }
 
     /**
-     * @see Gui#renderSlot(GuiGraphics, int, int, DeltaTracker, Player, ItemStack, int)
+     * @see Gui#extractSlot(GuiGraphicsExtractor, int, int, DeltaTracker, Player, ItemStack, int)
      */
-    private void renderSlot(GuiGraphics guiGraphics, Font font, int x, int y, Player player, ItemStack itemStack, float popTime) {
+    private void renderSlot(GuiGraphicsExtractor guiGraphics, Font font, int x, int y, Player player, ItemStack itemStack, float popTime) {
         if (!itemStack.isEmpty()) {
             if (popTime > 0.0F) {
                 float g = 1.0F + popTime / 5.0F;
@@ -249,12 +247,12 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
                 guiGraphics.pose().translate(-(x + 8), -(y + 12));
             }
 
-            guiGraphics.renderItem(player, itemStack, x, y, 0);
+            guiGraphics.item(player, itemStack, x, y, 0);
             if (popTime > 0.0F) {
                 guiGraphics.pose().popMatrix();
             }
 
-            guiGraphics.renderItemDecorations(font, itemStack, x, y);
+            guiGraphics.itemDecorations(font, itemStack, x, y);
         }
     }
 }

@@ -3,7 +3,7 @@ package fuzs.hotbarslotcycling.api.v1.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 
 public record HotbarCyclingProvider(Inventory inventory) implements SlotCyclingProvider {
@@ -73,28 +73,28 @@ public record HotbarCyclingProvider(Inventory inventory) implements SlotCyclingP
         // so Minecraft 1.20.4 introduced a fun limitation where otherSlot can only be a hotbar (or offhand) slot, where previously freely swapping with any other inventory slot was possible
         // so instead of swapping slots directly, we have to use some hotbar slot (in our case simply the corresponding slot for that column) to temporarily put the items
         if (otherSlot >= 0 && otherSlot < Inventory.getSelectionSize()) {
-            minecraft.gameMode.handleInventoryMouseClick(player.containerMenu.containerId,
+            minecraft.gameMode.handleContainerInput(player.containerMenu.containerId,
                     slot,
                     otherSlot,
-                    ClickType.SWAP,
+                    ContainerInput.SWAP,
                     player);
         } else {
             // any hotbar slot would do, just a temporary place to put the items since the second slot must be in the hotbar or offhand now
             int hotbarSlot = otherSlot % Inventory.getSelectionSize();
-            minecraft.gameMode.handleInventoryMouseClick(player.containerMenu.containerId,
+            minecraft.gameMode.handleContainerInput(player.containerMenu.containerId,
                     slot,
                     hotbarSlot,
-                    ClickType.SWAP,
+                    ContainerInput.SWAP,
                     player);
-            minecraft.gameMode.handleInventoryMouseClick(player.containerMenu.containerId,
+            minecraft.gameMode.handleContainerInput(player.containerMenu.containerId,
                     otherSlot,
                     hotbarSlot,
-                    ClickType.SWAP,
+                    ContainerInput.SWAP,
                     player);
-            minecraft.gameMode.handleInventoryMouseClick(player.containerMenu.containerId,
+            minecraft.gameMode.handleContainerInput(player.containerMenu.containerId,
                     slot,
                     hotbarSlot,
-                    ClickType.SWAP,
+                    ContainerInput.SWAP,
                     player);
         }
     }

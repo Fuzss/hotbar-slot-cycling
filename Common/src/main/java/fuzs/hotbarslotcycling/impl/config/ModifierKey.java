@@ -1,6 +1,6 @@
 package fuzs.hotbarslotcycling.impl.config;
 
-import fuzs.puzzleslib.api.util.v1.CommonHelper;
+import fuzs.puzzleslib.common.api.util.v1.CommonHelper;
 
 import java.util.function.BooleanSupplier;
 

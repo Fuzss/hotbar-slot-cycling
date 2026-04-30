@@ -1,7 +1,7 @@
 package fuzs.hotbarslotcycling.fabric.impl;
 
 import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
-import fuzs.puzzleslib.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import net.fabricmc.api.ModInitializer;
 
 public class HotbarSlotCyclingFabric implements ModInitializer {

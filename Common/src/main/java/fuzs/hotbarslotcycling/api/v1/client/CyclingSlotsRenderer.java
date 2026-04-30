@@ -2,7 +2,7 @@ package fuzs.hotbarslotcycling.api.v1.client;
 
 import fuzs.hotbarslotcycling.impl.client.handler.SlotsRendererHandler;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,10 +14,10 @@ public interface CyclingSlotsRenderer {
     /**
      * Main method for rendering the additional slot cycling slots.
      */
-    void renderSlots(GuiGraphics guiGraphics, int screenWidth, int screenHeight, float partialTick, Font font, Player player, ItemStack backwardStack, ItemStack selectedStack, ItemStack forwardStack);
+    void renderSlots(GuiGraphicsExtractor guiGraphics, int screenWidth, int screenHeight, float partialTick, Font font, Player player, ItemStack backwardStack, ItemStack selectedStack, ItemStack forwardStack);
 
     /**
-     * Called inside {@link #renderSlots(GuiGraphics, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}
+     * Called inside {@link #renderSlots(GuiGraphicsExtractor, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}
      * by the default implementation to decide whether to proceed with rendering.
      */
     boolean testValidStacks(ItemStack backwardStack, ItemStack selectedStack, ItemStack forwardStack);
@@ -27,22 +27,22 @@ public interface CyclingSlotsRenderer {
      * textures.
      * <p>
      * How many slot backgrounds are drawn is decided in
-     * {@link #renderSlots(GuiGraphics, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}.
+     * {@link #renderSlots(GuiGraphicsExtractor, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}.
      */
-    void renderSlotBackgrounds(GuiGraphics guiGraphics, int posX, int posY, boolean renderForwardStack, boolean renderBackwardStack, boolean renderToRight);
+    void renderSlotBackgrounds(GuiGraphicsExtractor guiGraphics, int posX, int posY, boolean renderForwardStack, boolean renderBackwardStack, boolean renderToRight);
 
     /**
      * Renders up to three items above the previously drawn slot backgrounds.
      * <p>
      * How many items are drawn is decided in
-     * {@link #renderSlots(GuiGraphics, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}.
+     * {@link #renderSlots(GuiGraphicsExtractor, int, int, float, Font, Player, ItemStack, ItemStack, ItemStack)}.
      */
-    void renderSlotItems(GuiGraphics guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack selectedStack, ItemStack forwardStack, ItemStack backwardStack, boolean renderToRight);
+    void renderSlotItems(GuiGraphicsExtractor guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack selectedStack, ItemStack forwardStack, ItemStack backwardStack, boolean renderToRight);
 
     /**
      * Renders an item on the screen.
      */
-    void renderItemInSlot(GuiGraphics guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack itemStack);
+    void renderItemInSlot(GuiGraphicsExtractor guiGraphics, int posX, int posY, float partialTick, Font font, Player player, ItemStack itemStack);
 
     /**
      * Set the currently used {@link CyclingSlotsRenderer} instance, should be called once during mod construction.
