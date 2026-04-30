@@ -1,4 +1,4 @@
-package fuzs.hotbarslotcycling.api.v1.client;
+package fuzs.hotbarslotcycling.common.api.v1.client;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;

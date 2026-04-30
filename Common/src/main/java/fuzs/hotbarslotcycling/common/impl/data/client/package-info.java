@@ -1,4 +1,4 @@
 @ApiStatus.Internal
-package fuzs.hotbarslotcycling.impl.data.client;
+package fuzs.hotbarslotcycling.common.impl.data.client;
 
 import org.jetbrains.annotations.ApiStatus;

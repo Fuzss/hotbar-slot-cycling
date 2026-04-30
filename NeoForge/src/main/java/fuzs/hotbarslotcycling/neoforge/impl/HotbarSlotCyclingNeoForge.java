@@ -1,6 +1,6 @@
 package fuzs.hotbarslotcycling.neoforge.impl;
 
-import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
+import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import net.neoforged.fml.common.Mod;
 

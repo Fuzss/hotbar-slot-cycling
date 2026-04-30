@@ -1,4 +1,4 @@
-package fuzs.hotbarslotcycling.api.v1.client;
+package fuzs.hotbarslotcycling.common.api.v1.client;
 
 import com.google.common.collect.Maps;
 import net.minecraft.world.InteractionHand;

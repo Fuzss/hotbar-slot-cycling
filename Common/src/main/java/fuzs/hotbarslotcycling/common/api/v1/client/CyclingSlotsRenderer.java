@@ -1,6 +1,6 @@
-package fuzs.hotbarslotcycling.api.v1.client;
+package fuzs.hotbarslotcycling.common.api.v1.client;
 
-import fuzs.hotbarslotcycling.impl.client.handler.SlotsRendererHandler;
+import fuzs.hotbarslotcycling.common.impl.client.handler.SlotsRendererHandler;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;

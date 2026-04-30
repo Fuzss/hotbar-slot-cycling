@@ -1,10 +1,10 @@
-package fuzs.hotbarslotcycling.impl.client;
+package fuzs.hotbarslotcycling.common.impl.client;
 
-import fuzs.hotbarslotcycling.api.v1.client.HotbarCyclingProvider;
-import fuzs.hotbarslotcycling.api.v1.client.SlotCyclingProvider;
-import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
-import fuzs.hotbarslotcycling.impl.client.handler.CyclingInputHandler;
-import fuzs.hotbarslotcycling.impl.client.handler.SlotsRendererHandler;
+import fuzs.hotbarslotcycling.common.api.v1.client.HotbarCyclingProvider;
+import fuzs.hotbarslotcycling.common.api.v1.client.SlotCyclingProvider;
+import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
+import fuzs.hotbarslotcycling.common.impl.client.handler.CyclingInputHandler;
+import fuzs.hotbarslotcycling.common.impl.client.handler.SlotsRendererHandler;
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.common.api.client.core.v1.context.GuiLayersContext;
 import fuzs.puzzleslib.common.api.client.core.v1.context.KeyMappingsContext;

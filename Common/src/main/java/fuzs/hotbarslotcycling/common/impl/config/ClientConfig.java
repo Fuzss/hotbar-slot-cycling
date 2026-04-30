@@ -1,4 +1,4 @@
-package fuzs.hotbarslotcycling.impl.config;
+package fuzs.hotbarslotcycling.common.impl.config;
 
 import fuzs.puzzleslib.common.api.config.v3.Config;
 import fuzs.puzzleslib.common.api.config.v3.ConfigCore;

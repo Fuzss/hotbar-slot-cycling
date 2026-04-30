@@ -1,6 +1,6 @@
-package fuzs.hotbarslotcycling.impl;
+package fuzs.hotbarslotcycling.common.impl;
 
-import fuzs.hotbarslotcycling.impl.config.ClientConfig;
+import fuzs.hotbarslotcycling.common.impl.config.ClientConfig;
 import fuzs.puzzleslib.common.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import net.minecraft.resources.Identifier;

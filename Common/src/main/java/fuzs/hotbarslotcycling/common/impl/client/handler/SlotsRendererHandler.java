@@ -1,9 +1,9 @@
-package fuzs.hotbarslotcycling.impl.client.handler;
+package fuzs.hotbarslotcycling.common.impl.client.handler;
 
-import fuzs.hotbarslotcycling.api.v1.client.CyclingSlotsRenderer;
-import fuzs.hotbarslotcycling.api.v1.client.SlotCyclingProvider;
-import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
-import fuzs.hotbarslotcycling.impl.config.ClientConfig;
+import fuzs.hotbarslotcycling.common.api.v1.client.CyclingSlotsRenderer;
+import fuzs.hotbarslotcycling.common.api.v1.client.SlotCyclingProvider;
+import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
+import fuzs.hotbarslotcycling.common.impl.config.ClientConfig;
 import fuzs.puzzleslib.common.api.client.gui.v2.GuiGraphicsHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;

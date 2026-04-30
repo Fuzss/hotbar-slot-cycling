@@ -1,7 +1,7 @@
-package fuzs.hotbarslotcycling.impl.data.client;
+package fuzs.hotbarslotcycling.common.impl.data.client;
 
-import fuzs.hotbarslotcycling.impl.HotbarSlotCycling;
-import fuzs.hotbarslotcycling.impl.client.handler.CyclingInputHandler;
+import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
+import fuzs.hotbarslotcycling.common.impl.client.handler.CyclingInputHandler;
 import fuzs.puzzleslib.common.api.client.data.v2.AbstractLanguageProvider;
 import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
 
