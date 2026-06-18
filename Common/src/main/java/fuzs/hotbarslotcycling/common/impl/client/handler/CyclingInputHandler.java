@@ -59,7 +59,7 @@ public class CyclingInputHandler {
         }
 
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
-            if (minecraft.getOverlay() == null && minecraft.screen == null) {
+            if (minecraft.gui.overlay() == null && minecraft.gui.screen() == null) {
                 handleModKeybinds(minecraft.player);
                 handleHotbarKeybinds(minecraft.player, minecraft.options);
             }

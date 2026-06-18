@@ -33,7 +33,7 @@ public final class SlotsRendererHandler implements CyclingSlotsRenderer {
 
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (!minecraft.options.hideGui && minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
+        if (!minecraft.gui.hud.isHidden() && minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
 
             if (minecraft.getCameraEntity() instanceof Player player) {
 
