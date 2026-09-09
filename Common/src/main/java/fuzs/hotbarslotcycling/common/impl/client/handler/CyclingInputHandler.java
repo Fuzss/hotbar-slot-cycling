@@ -30,18 +30,29 @@ public class CyclingInputHandler {
     private static int globalPopTime;
 
     public static EventResultHolder<Integer> onHotbarScrolling(Inventory inventory, int oldSlot, int newSlot, double scrollAmountX, double scrollAmountY) {
-        if (HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
-            int slotDelta = newSlot - oldSlot;
-            if (slotDelta != 0) {
-                Player player = Minecraft.getInstance().player;
-                if (slotDelta > 0 == HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling) {
-                    if (cycleSlot(player, SlotCyclingProvider::cycleSlotBackward)) {
-                        return EventResultHolder.interrupt(-1);
-                    }
-                } else {
-                    if (cycleSlot(player, SlotCyclingProvider::cycleSlotForward)) {
-                        return EventResultHolder.interrupt(-1);
-                    }
+        if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
+            return EventResultHolder.pass();
+        }
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.player != null && minecraft.player.isSpectator()) {
+            return EventResultHolder.pass();
+        }
+
+        // TODO migrate this back to the mouse scroll event and use proper values supplied by the event for 26.3
+        double accumulatedScroll = minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY == 0 ?
+                -minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollX :
+                minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY;
+        double slotDelta = scrollAmountY + accumulatedScroll;
+        if (slotDelta != 0) {
+            Player player = Minecraft.getInstance().player;
+            if (slotDelta > 0 != HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling) {
+                if (cycleSlot(player, SlotCyclingProvider::cycleSlotBackward)) {
+                    return EventResultHolder.interrupt(-1);
+                }
+            } else {
+                if (cycleSlot(player, SlotCyclingProvider::cycleSlotForward)) {
+                    return EventResultHolder.interrupt(-1);
                 }
             }
         }
