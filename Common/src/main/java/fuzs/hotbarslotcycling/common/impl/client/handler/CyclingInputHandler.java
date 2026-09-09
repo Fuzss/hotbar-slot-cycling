@@ -7,13 +7,12 @@ import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
 import fuzs.hotbarslotcycling.common.impl.config.ClientConfig;
 import fuzs.hotbarslotcycling.common.impl.config.ModifierKey;
 import fuzs.puzzleslib.common.api.client.key.v1.KeyMappingHelper;
-import fuzs.puzzleslib.common.api.event.v1.core.EventResultHolder;
+import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,62 +28,55 @@ public class CyclingInputHandler {
     private static int slotsDisplayTicks;
     private static int globalPopTime;
 
-    public static EventResultHolder<Integer> onHotbarScrolling(Inventory inventory, int oldSlot, int newSlot, double scrollAmountX, double scrollAmountY) {
-        if (HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
-            int slotDelta = newSlot - oldSlot;
-            if (slotDelta != 0) {
-                Player player = Minecraft.getInstance().player;
-                if (slotDelta > 0 == HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling) {
-                    if (cycleSlot(player, SlotCyclingProvider::cycleSlotBackward)) {
-                        return EventResultHolder.interrupt(-1);
-                    }
+    public static EventResult onMouseScroll(boolean leftDown, boolean middleDown, boolean rightDown, double horizontalAmount, double verticalAmount) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.player.isSpectator()
+                && HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
+            double accumulatedScroll = minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY == 0 ?
+                    -minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollX :
+                    minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY;
+            double totalScroll = verticalAmount + accumulatedScroll;
+            boolean invertScrolling = HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling;
+            if (totalScroll != 0.0) {
+                Predicate<SlotCyclingProvider> cycleAction;
+                if (totalScroll > 0.0 == !invertScrolling) {
+                    cycleAction = SlotCyclingProvider::cycleSlotBackward;
                 } else {
-                    if (cycleSlot(player, SlotCyclingProvider::cycleSlotForward)) {
-                        return EventResultHolder.interrupt(-1);
-                    }
+                    cycleAction = SlotCyclingProvider::cycleSlotForward;
+                }
+                if (cycleSlot(minecraft, minecraft.player, cycleAction)) {
+                    return EventResult.INTERRUPT;
                 }
             }
         }
-
-        return EventResultHolder.pass();
+        return EventResult.PASS;
     }
 
     public static void onStartClientTick(Minecraft minecraft) {
-        if (slotsDisplayTicks > 0) {
-            slotsDisplayTicks--;
-        }
-
-        if (globalPopTime > 0) {
-            globalPopTime--;
-        }
-
+        if (slotsDisplayTicks > 0) slotsDisplayTicks--;
+        if (globalPopTime > 0) globalPopTime--;
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.getOverlay() == null && minecraft.screen == null) {
-                handleModKeybinds(minecraft.player);
-                handleHotbarKeybinds(minecraft.player, minecraft.options);
+                handleModKeybinds(minecraft, minecraft.player);
+                handleHotbarKeybinds(minecraft, minecraft.player, minecraft.options);
             }
-
             if (HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
                 slotsDisplayTicks = DEFAULT_SLOTS_DISPLAY_TICKS;
             }
         }
     }
 
-    private static void handleModKeybinds(Player player) {
+    private static void handleModKeybinds(Minecraft minecraft, Player player) {
         while (CYCLE_LEFT_KEY_MAPPING.consumeClick()) {
-            cycleSlot(player, SlotCyclingProvider::cycleSlotBackward);
+            cycleSlot(minecraft, player, SlotCyclingProvider::cycleSlotBackward);
         }
-
         while (CYCLE_RIGHT_KEY_MAPPING.consumeClick()) {
-            cycleSlot(player, SlotCyclingProvider::cycleSlotForward);
+            cycleSlot(minecraft, player, SlotCyclingProvider::cycleSlotForward);
         }
     }
 
-    private static void handleHotbarKeybinds(Player player, Options options) {
-        if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).doublePressHotbarKey) {
-            return;
-        }
-
+    private static void handleHotbarKeybinds(Minecraft minecraft, Player player, Options options) {
+        if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).doublePressHotbarKey) return;
         boolean saveHotbarActivatorDown = options.keySaveHotbarActivator.isDown();
         boolean loadHotbarActivatorDown = options.keyLoadHotbarActivator.isDown();
         if (!player.isCreative() || !loadHotbarActivatorDown && !saveHotbarActivatorDown) {
@@ -92,32 +84,31 @@ public class CyclingInputHandler {
             boolean forward = !scrollingModifierKey.isKey() || !scrollingModifierKey.isActive();
             for (int i = 0; i < options.keyHotbarSlots.length; i++) {
                 while (i == player.getInventory().getSelectedSlot() && options.keyHotbarSlots[i].consumeClick()) {
-                    cycleSlot(player,
+                    cycleSlot(minecraft,
+                            player,
                             forward ? SlotCyclingProvider::cycleSlotForward : SlotCyclingProvider::cycleSlotBackward);
                 }
             }
         }
     }
 
-    private static boolean cycleSlot(Player player, Predicate<SlotCyclingProvider> cycleAction) {
+    private static boolean cycleSlot(Minecraft minecraft, Player player, Predicate<SlotCyclingProvider> cycleAction) {
         SlotCyclingProvider provider = SlotCyclingProvider.getProvider(player);
         if (provider != null && cycleAction.test(provider)) {
             slotsDisplayTicks = DEFAULT_SLOTS_DISPLAY_TICKS;
             globalPopTime = 5;
             player.stopUsingItem();
             if (provider instanceof ItemCyclingProvider itemProvider) {
-                clearItemRendererInHand(itemProvider.interactionHand());
+                clearItemRendererInHand(minecraft, itemProvider.interactionHand());
             }
-
             return true;
         }
-
         return false;
     }
 
-    private static void clearItemRendererInHand(InteractionHand interactionHand) {
+    private static void clearItemRendererInHand(Minecraft minecraft, InteractionHand interactionHand) {
         // force the reequip animation for the new held item
-        ItemInHandRenderer itemInHandRenderer = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
+        ItemInHandRenderer itemInHandRenderer = minecraft.gameRenderer.itemInHandRenderer;
         if (interactionHand == InteractionHand.OFF_HAND) {
             itemInHandRenderer.offHandItem = ItemStack.EMPTY;
         } else {
