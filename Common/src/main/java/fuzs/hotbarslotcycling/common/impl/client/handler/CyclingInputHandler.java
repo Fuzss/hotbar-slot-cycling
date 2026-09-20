@@ -7,15 +7,12 @@ import fuzs.hotbarslotcycling.common.impl.HotbarSlotCycling;
 import fuzs.hotbarslotcycling.common.impl.config.ClientConfig;
 import fuzs.hotbarslotcycling.common.impl.config.ModifierKey;
 import fuzs.puzzleslib.common.api.client.key.v1.KeyMappingHelper;
-import fuzs.puzzleslib.common.api.event.v1.core.EventResultHolder;
+import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
@@ -29,35 +26,32 @@ public class CyclingInputHandler {
     private static int slotsDisplayTicks;
     private static int globalPopTime;
 
-    public static EventResultHolder<Integer> onHotbarScrolling(Inventory inventory, int oldSlot, int newSlot, double scrollAmountX, double scrollAmountY) {
+    public static EventResult onHotbarScrolling(double scrollX, double scrollY, double accumulatedScrollX, double accumulatedScrollY) {
         if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
-            return EventResultHolder.pass();
+            return EventResult.PASS;
         }
 
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null && minecraft.player.isSpectator()) {
-            return EventResultHolder.pass();
+            return EventResult.PASS;
         }
 
-        // TODO migrate this back to the mouse scroll event and use proper values supplied by the event for 26.3
-        double accumulatedScroll = minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY == 0 ?
-                -minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollX :
-                minecraft.mouseHandler.scrollWheelHandler.accumulatedScrollY;
-        double slotDelta = scrollAmountY + accumulatedScroll;
+        double accumulatedScroll = accumulatedScrollY == 0 ? -accumulatedScrollX : accumulatedScrollY;
+        double slotDelta = scrollY + accumulatedScroll;
         if (slotDelta != 0) {
             Player player = Minecraft.getInstance().player;
             if (slotDelta > 0 != HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling) {
                 if (cycleSlot(player, SlotCyclingProvider::cycleSlotBackward)) {
-                    return EventResultHolder.interrupt(-1);
+                    return EventResult.INTERRUPT;
                 }
             } else {
                 if (cycleSlot(player, SlotCyclingProvider::cycleSlotForward)) {
-                    return EventResultHolder.interrupt(-1);
+                    return EventResult.INTERRUPT;
                 }
             }
         }
 
-        return EventResultHolder.pass();
+        return EventResult.PASS;
     }
 
     public static void onStartClientTick(Minecraft minecraft) {
@@ -128,12 +122,7 @@ public class CyclingInputHandler {
 
     private static void clearItemRendererInHand(InteractionHand interactionHand) {
         // force the reequip animation for the new held item
-        ItemInHandRenderer itemInHandRenderer = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
-        if (interactionHand == InteractionHand.OFF_HAND) {
-            itemInHandRenderer.offHandItem = ItemStack.EMPTY;
-        } else {
-            itemInHandRenderer.mainHandItem = ItemStack.EMPTY;
-        }
+        Minecraft.getInstance().player.firstPersonHandsAndItems().itemUsed(interactionHand);
     }
 
     public static int getSlotsDisplayTicks() {
