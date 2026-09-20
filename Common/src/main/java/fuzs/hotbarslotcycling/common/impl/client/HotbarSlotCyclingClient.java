@@ -23,7 +23,7 @@ public class HotbarSlotCyclingClient implements ClientModConstructor {
 
     private static void registerEventHandlers() {
         ClientTickEvents.START.register(CyclingInputHandler::onStartClientTick);
-        ClientInputEvents.MOUSE_SCROLL.register(CyclingInputHandler::onHotbarScrolling);
+        ClientInputEvents.MOUSE_SCROLL.register(CyclingInputHandler::onMouseScroll);
     }
 
     @Override

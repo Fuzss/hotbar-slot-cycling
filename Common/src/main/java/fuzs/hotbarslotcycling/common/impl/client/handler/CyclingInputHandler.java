@@ -11,8 +11,8 @@ import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Predicate;
 
@@ -26,7 +26,7 @@ public class CyclingInputHandler {
     private static int slotsDisplayTicks;
     private static int globalPopTime;
 
-    public static EventResult onHotbarScrolling(double scrollX, double scrollY, double accumulatedScrollX, double accumulatedScrollY) {
+    public static EventResult onMouseScroll(double scrollX, double scrollY, double accumulatedScrollX, double accumulatedScrollY) {
         if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).scrollingModifierKey.isActive()) {
             return EventResult.PASS;
         }
@@ -39,13 +39,12 @@ public class CyclingInputHandler {
         double accumulatedScroll = accumulatedScrollY == 0 ? -accumulatedScrollX : accumulatedScrollY;
         double slotDelta = scrollY + accumulatedScroll;
         if (slotDelta != 0) {
-            Player player = Minecraft.getInstance().player;
             if (slotDelta > 0 != HotbarSlotCycling.CONFIG.get(ClientConfig.class).invertScrolling) {
-                if (cycleSlot(player, SlotCyclingProvider::cycleSlotBackward)) {
+                if (cycleSlot(minecraft.player, SlotCyclingProvider::cycleSlotBackward)) {
                     return EventResult.INTERRUPT;
                 }
             } else {
-                if (cycleSlot(player, SlotCyclingProvider::cycleSlotForward)) {
+                if (cycleSlot(minecraft.player, SlotCyclingProvider::cycleSlotForward)) {
                     return EventResult.INTERRUPT;
                 }
             }
@@ -75,7 +74,7 @@ public class CyclingInputHandler {
         }
     }
 
-    private static void handleModKeybinds(Player player) {
+    private static void handleModKeybinds(LocalPlayer player) {
         while (CYCLE_LEFT_KEY_MAPPING.consumeClick()) {
             cycleSlot(player, SlotCyclingProvider::cycleSlotBackward);
         }
@@ -85,7 +84,7 @@ public class CyclingInputHandler {
         }
     }
 
-    private static void handleHotbarKeybinds(Player player, Options options) {
+    private static void handleHotbarKeybinds(LocalPlayer player, Options options) {
         if (!HotbarSlotCycling.CONFIG.get(ClientConfig.class).doublePressHotbarKey) {
             return;
         }
@@ -104,25 +103,22 @@ public class CyclingInputHandler {
         }
     }
 
-    private static boolean cycleSlot(Player player, Predicate<SlotCyclingProvider> cycleAction) {
+    private static boolean cycleSlot(LocalPlayer player, Predicate<SlotCyclingProvider> cycleAction) {
         SlotCyclingProvider provider = SlotCyclingProvider.getProvider(player);
         if (provider != null && cycleAction.test(provider)) {
             slotsDisplayTicks = DEFAULT_SLOTS_DISPLAY_TICKS;
             globalPopTime = 5;
             player.stopUsingItem();
             if (provider instanceof ItemCyclingProvider itemProvider) {
-                clearItemRendererInHand(itemProvider.interactionHand());
+                InteractionHand interactionHand = itemProvider.interactionHand();
+                // Force showing the re-equip animation for the newly held item.
+                player.firstPersonHandsAndItems().itemUsed(interactionHand);
             }
 
             return true;
         }
 
         return false;
-    }
-
-    private static void clearItemRendererInHand(InteractionHand interactionHand) {
-        // force the reequip animation for the new held item
-        Minecraft.getInstance().player.firstPersonHandsAndItems().itemUsed(interactionHand);
     }
 
     public static int getSlotsDisplayTicks() {
